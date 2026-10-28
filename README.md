@@ -6,6 +6,18 @@ Version 0.4.1 includes the rounded jade-glass C app icon. The raster master and 
 
 ## Use
 
+### Install from Terminal
+
+On an Apple Silicon Mac running macOS 14 or later, paste:
+
+```sh
+curl -fsSL https://github.com/byhaqii/Convy/releases/latest/download/install.sh | /bin/bash
+```
+
+This downloads the compiled app, checks its SHA-256 and signature, and installs it in `~/Applications`. No Xcode or sudo is needed. Open Convy from that folder. The installer refuses to overwrite an existing installation; move it aside to reinstall.
+
+The app is ad-hoc signed and not notarized. If macOS blocks it, approve it in **System Settings → Privacy & Security → Open Anyway**.
+
 Open **Convy.app**. Hold **Shift** while dragging a file in Finder, then drop it onto JPG, PNG, HEIC, or PDF. The rounded glass wheel appears near the pointer. Results are saved beside the source with a new name; originals and existing files are never overwritten.
 
 You can also choose files, output format, quality, and destination in the main window. **Buka roda** opens the wheel manually. Escape closes it.
@@ -45,4 +57,4 @@ Version 0.4 verification: build and local signature passed; conversion, multi-pa
 
 ## GitHub
 
-The `Source` folder, this README, and `.gitignore` form the source project. Build outputs are ignored. Put the app ZIP in GitHub Releases if you want to distribute a compiled version. No repository has been created or uploaded automatically.
+Source is hosted at [byhaqii/Convy](https://github.com/byhaqii/Convy). Compiled downloads and the installer are available in [Releases](https://github.com/byhaqii/Convy/releases). Build outputs are ignored.
