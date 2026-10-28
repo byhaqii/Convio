@@ -19,9 +19,9 @@ fi
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT
 curl --fail --location --show-error --silent \
-    https://github.com/byhaqii/Convy/releases/download/v0.4.1/Convy-0.4.1-arm64.zip \
+    https://github.com/byhaqii/Convy/releases/download/v0.4.2/Convy-0.4.2-arm64.zip \
     -o "$work/Convy.zip"
-echo "3c513ec60d2c3f68a4487360087bee4dd07f5244022da1eeb6c5649cc2f789c8  $work/Convy.zip" | shasum -a 256 -c -
+echo "c71de5a349584ecba707711ac8c0f36317ef0162436e029ae43dd1d8b6ebe23d  $work/Convy.zip" | shasum -a 256 -c -
 ditto -x -k "$work/Convy.zip" "$work"
 codesign --verify --deep --strict "$work/Convy.app"
 mkdir -p "$HOME/Applications"

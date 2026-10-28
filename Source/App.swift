@@ -4,6 +4,28 @@ import UniformTypeIdentifiers
 
 @MainActor final class AppDelegate: NSObject, NSApplicationDelegate {
     let dragWheel = DragWheelController()
+    private var converterWindow: NSWindow?
+
+    func showConverter() {
+        if converterWindow == nil {
+            let window = NSWindow(
+                contentRect: NSRect(x: 0, y: 0, width: 760, height: 600),
+                styleMask: [.titled, .closable, .miniaturizable, .resizable],
+                backing: .buffered, defer: false)
+            window.title = "Convy"
+            window.contentViewController = NSHostingController(rootView: ContentView(dragWheel: dragWheel))
+            window.isReleasedWhenClosed = false
+            window.center()
+            converterWindow = window
+        }
+        converterWindow?.deminiaturize(nil)
+        converterWindow?.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        false
+    }
 }
 
 struct Item: Identifiable {
@@ -16,9 +38,12 @@ struct Item: Identifiable {
 @main struct ConvyApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
     var body: some Scene {
-        WindowGroup("Convy") { ContentView(dragWheel: delegate.dragWheel) }
-            .defaultSize(width: 760, height: 600)
-            .windowResizability(.contentMinSize)
+        MenuBarExtra("Convy", systemImage: "arrow.triangle.2.circlepath") {
+            Button("Open Convy") { delegate.showConverter() }
+            Button("Open Wheel") { delegate.dragWheel.openWheel() }
+            Divider()
+            Button("Quit Convy") { NSApp.terminate(nil) }.keyboardShortcut("q")
+        }
     }
 }
 

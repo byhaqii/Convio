@@ -18,7 +18,9 @@ This downloads the compiled app, checks its SHA-256 and signature, and installs 
 
 The app is ad-hoc signed and not notarized. If macOS blocks it, approve it in **System Settings → Privacy & Security → Open Anyway**.
 
-Open **Convy.app**. Hold **Shift** while dragging a file in Finder, then drop it onto JPG, PNG, HEIC, or PDF. The rounded glass wheel appears near the pointer. Results are saved beside the source with a new name; originals and existing files are never overwritten.
+Open **Convy.app**. Convy runs in the background with a circular-arrows icon in the macOS menu bar and no Dock icon. Click the icon for **Open Convy**, **Open Wheel**, or **Quit Convy**. Closing the converter window keeps Convy running; opening it again preserves the current file list. Convy does not automatically start at login.
+
+Hold **Shift** while dragging a file in Finder, then drop it onto JPG, PNG, HEIC, or PDF. The rounded glass wheel appears near the pointer. Results are saved beside the source with a new name; originals and existing files are never overwritten.
 
 You can also choose files, output format, quality, and destination in the main window. **Buka roda** opens the wheel manually. Escape closes it.
 
