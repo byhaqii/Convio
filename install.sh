@@ -11,21 +11,44 @@ if (( $(sw_vers -productVersion | cut -d. -f1) < 14 )); then
 fi
 
 destination="$HOME/Applications/Convy.app"
-if [[ -e "$destination" || -L "$destination" ]]; then
-    echo "Convy already exists at $destination. Move it aside before reinstalling." >&2
+if [[ -L "$destination" || ( -e "$destination" && ! -d "$destination" ) ]]; then
+    echo "The installation path is not an app directory: $destination" >&2
+    exit 1
+fi
+if pgrep -x Convy >/dev/null; then
+    echo 'Quit Convy from its menu bar, then run this command again.' >&2
     exit 1
 fi
 
-work=$(mktemp -d)
-trap 'rm -rf "$work"' EXIT
+mkdir -p "$HOME/Applications"
+work=$(mktemp -d "$HOME/Applications/.Convy-update.XXXXXX")
+lock=''
+trap 'if [[ -n "$lock" ]]; then rmdir "$lock" 2>/dev/null || true; fi; if [[ ! -e "$work/Previous.app" ]]; then rm -rf "$work"; fi' EXIT
 curl --fail --location --show-error --silent \
-    https://github.com/byhaqii/Convy/releases/download/v0.4.2/Convy-0.4.2-arm64.zip \
+    https://github.com/byhaqii/Convy/releases/download/v0.4.3/Convy-0.4.3-arm64.zip \
     -o "$work/Convy.zip"
-echo "c71de5a349584ecba707711ac8c0f36317ef0162436e029ae43dd1d8b6ebe23d  $work/Convy.zip" | shasum -a 256 -c -
+echo "ed8ca4a7132c6f00f963444d99fd7806f46d8162d531c35928f5fae5dffab805  $work/Convy.zip" | shasum -a 256 -c -
 ditto -x -k "$work/Convy.zip" "$work"
 codesign --verify --deep --strict "$work/Convy.app"
-mkdir -p "$HOME/Applications"
-mv "$work/Convy.app" "$destination"
+[[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$work/Convy.app/Contents/Info.plist")" == com.shustle.convy ]]
+[[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$work/Convy.app/Contents/Info.plist")" == 0.4.3 ]]
+lipo "$work/Convy.app/Contents/MacOS/Convy" -verify_arch arm64
+if [[ -d "$destination" ]]; then
+    if pgrep -x Convy >/dev/null; then
+        echo 'Quit Convy before updating. Nothing was replaced.' >&2
+        exit 1
+    fi
+    cp "$work/Convy.app/Contents/Resources/update-app.sh" "$work/update-app.sh"
+    bash "$work/update-app.sh" 0 "$destination" "$work/Convy.app"
+else
+    lock="$destination.update-lock"
+    mkdir "$lock" || { lock=''; echo 'Another Convy installation is already in progress.' >&2; exit 1; }
+    if [[ -e "$destination" || -L "$destination" ]]; then
+        echo 'Another installation completed. Run the command again to update it.' >&2
+        exit 1
+    fi
+    mv "$work/Convy.app" "$destination"
+fi
 echo "Installed: $destination"
 echo 'Open Convy from your Applications folder in your home directory.'
 echo 'If macOS blocks it, use System Settings > Privacy & Security > Open Anyway.'

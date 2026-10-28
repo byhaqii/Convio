@@ -2,7 +2,7 @@
 
 A local image and PDF converter for Apple Silicon Macs running macOS 14 or later.
 
-Version 0.4.1 includes the rounded jade-glass C app icon. The raster master and macOS icon are in `Source/Assets/`; the build script installs the icon automatically.
+Version 0.4.3 adds in-app update checks and Update & Restart. The raster master and macOS icon are in `Source/Assets/`; the build script installs the icon automatically.
 
 ## Use
 
@@ -14,9 +14,17 @@ On an Apple Silicon Mac running macOS 14 or later, paste:
 curl -fsSL https://github.com/byhaqii/Convy/releases/latest/download/install.sh | /bin/bash
 ```
 
-This downloads the compiled app, checks its SHA-256 and signature, and installs it in `~/Applications`. No Xcode or sudo is needed. Open Convy from that folder. The installer refuses to overwrite an existing installation; move it aside to reinstall.
+This downloads the compiled app, checks its SHA-256 and signature, and installs it in `~/Applications`. No Xcode or sudo is needed. Open Convy from that folder. To upgrade an older installation, quit Convy first and run the same command; the previous app is backed up before replacement.
 
 The app is ad-hoc signed and not notarized. If macOS blocks it, approve it in **System Settings → Privacy & Security → Open Anyway**.
+
+### Updates
+
+Convy checks GitHub Releases at launch and every 24 hours while running. Open the menu bar icon for **Check for Updates…** or **Update & Restart** when a newer release is available. Installation requires confirmation and waits until no conversion is running. Restarting clears the window's file list; original files and conversion results are preserved.
+
+Version 0.4.2 and earlier require the Terminal command above once to gain in-app updating. The app must be installed in a writable folder; updating an administrator-owned installation may require moving it to `~/Applications` first.
+
+Updates validate the GitHub asset checksum, bundle identity/version, macOS compatibility, architecture, and code signature before replacement. Downloads trust HTTPS and the `byhaqii/Convy` repository; ad-hoc signing does not verify publisher identity. No Gatekeeper protections are bypassed. The previous app and `update.log` remain in a hidden `.Convy-update-*` folder beside the installed app for recovery. A replacement or launch-command failure restores the previous app; a later app crash is not automatically detected.
 
 Open **Convy.app**. Convy runs in the background with a circular-arrows icon in the macOS menu bar and no Dock icon. Click the icon for **Open Convy**, **Open Wheel**, or **Quit Convy**. Closing the converter window keeps Convy running; opening it again preserves the current file list. Convy does not automatically start at login.
 
@@ -28,7 +36,7 @@ You can also choose files, output format, quality, and destination in the main w
 - Image-to-PDF creates one PDF per image.
 - The wheel uses 85% quality for JPG/HEIC. It appears over 180 ms and shrinks away over 120 ms immediately after conversion. Reduce Motion uses an 80 ms fade.
 - macOS 26 uses native Liquid Glass. Earlier supported macOS versions use frosted material.
-- No accounts, uploads, analytics, network requests, or Homebrew dependencies.
+- Conversion stays local. No accounts, file uploads, analytics, or Homebrew dependencies. Update checks contact GitHub, and installing an update downloads its release ZIP.
 
 ## Limits
 
@@ -53,6 +61,17 @@ swiftc -swift-version 6 -parse-as-library Source/Converter.swift Source/DragWhee
 /tmp/convy-tests
 ```
 
+Update checks and isolated replacement tests:
+
+```sh
+swiftc -module-cache-path /tmp/convy-module-cache -swift-version 6 -parse-as-library Source/UpdateRelease.swift Source/UpdateValidation.swift Source/UpdateTests.swift -o /tmp/convy-update-tests
+/tmp/convy-update-tests
+python3 Source/test-update.py
+python3 Source/test-install.py /path/to/Convy-0.4.3-arm64.zip
+```
+
+The helper test replaces fixture directories and mocks the macOS launcher; it does not prove a real app restart. The installer test uses the supplied release archive, an isolated home folder, and mocked download/launch commands.
+
 Use `--skip-heic` when running tests in environments that block the hardware encoder. HEIC was tested through the previous app build on this Mac.
 
 Version 0.4 verification: build and local signature passed; conversion, multi-page PDF, original-file protection, duplicate names, EXIF orientation, invalid input, and rounded-sector hit tests passed. The Convy name, rounded wheel, and Escape dismissal were checked in the running app. Other Macs and frame-by-frame animation timing were not checked.
@@ -60,3 +79,5 @@ Version 0.4 verification: build and local signature passed; conversion, multi-pa
 ## GitHub
 
 Source is hosted at [byhaqii/Convy](https://github.com/byhaqii/Convy). Compiled downloads and the installer are available in [Releases](https://github.com/byhaqii/Convy/releases). Build outputs are ignored.
+
+For future updates, use a stable `vMAJOR.MINOR.PATCH` release tag matching `CFBundleShortVersionString`, upload `Convy-MAJOR.MINOR.PATCH-arm64.zip`, and attach the matching `install.sh`. GitHub supplies the asset's SHA-256 digest used by the in-app updater. Update the installer's pinned version/checksum and run the checks above before publishing.

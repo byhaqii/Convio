@@ -59,6 +59,10 @@ enum WheelGeometry {
     private var idleChange = NSPasteboard(name: .drag).changeCount
     private var dismissed = false
     private var processing = false
+    var isProcessing: Bool { processing }
+    var updating = false {
+        didSet { if updating && !processing { hide() } }
+    }
     private var dismissing = false
     private var releaseAt: Date?
     private var manualUntil: Date?
@@ -75,7 +79,7 @@ enum WheelGeometry {
     }
 
     private func poll() {
-        guard !dismissing else { return }
+        guard !dismissing, !updating else { return }
         if !processing, panel?.isVisible == true, CGEventSource.keyState(.combinedSessionState, key: 53) {
             manualUntil = nil; dismissed = true; hide(); return
         }
@@ -107,7 +111,7 @@ enum WheelGeometry {
     }
 
     func openWheel() {
-        guard !processing, !dismissing else { return }
+        guard !processing, !dismissing, !updating else { return }
         manualUntil = Date().addingTimeInterval(20)
         show([])
         panel?.makeKeyAndOrderFront(nil)
@@ -167,7 +171,7 @@ enum WheelGeometry {
     }
 
     private func convert(_ urls: [URL], format: ImageFormat) {
-        guard !processing else { return }
+        guard !processing, !updating else { return }
         processing = true
         manualUntil = nil
         dismissed = true

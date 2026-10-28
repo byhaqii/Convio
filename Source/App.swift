@@ -4,7 +4,16 @@ import UniformTypeIdentifiers
 
 @MainActor final class AppDelegate: NSObject, NSApplicationDelegate {
     let dragWheel = DragWheelController()
+    lazy var updater = Updater(dragWheel: dragWheel)
     private var converterWindow: NSWindow?
+    private var updateTimer: Timer?
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        Task { await updater.check(manual: false) }
+        updateTimer = Timer.scheduledTimer(withTimeInterval: 86_400, repeats: true) { [weak self] _ in
+            Task { @MainActor [weak self] in await self?.updater.check(manual: false) }
+        }
+    }
 
     func showConverter() {
         if converterWindow == nil {
@@ -13,7 +22,7 @@ import UniformTypeIdentifiers
                 styleMask: [.titled, .closable, .miniaturizable, .resizable],
                 backing: .buffered, defer: false)
             window.title = "Convy"
-            window.contentViewController = NSHostingController(rootView: ContentView(dragWheel: dragWheel))
+            window.contentViewController = NSHostingController(rootView: ContentView(dragWheel: dragWheel, updater: updater))
             window.isReleasedWhenClosed = false
             window.center()
             converterWindow = window
@@ -41,6 +50,16 @@ struct Item: Identifiable {
         MenuBarExtra("Convy", systemImage: "arrow.triangle.2.circlepath") {
             Button("Open Convy") { delegate.showConverter() }
             Button("Open Wheel") { delegate.dragWheel.openWheel() }
+                .disabled(delegate.updater.installing)
+            Divider()
+            if let release = delegate.updater.available {
+                Button("Update & Restart (\(release.version))") { Task { await delegate.updater.install() } }
+                    .disabled(delegate.updater.installing || delegate.updater.windowBusy || delegate.dragWheel.isProcessing)
+            }
+            Button(delegate.updater.checking ? "Checking for Updates…" : "Check for Updates…") {
+                Task { await delegate.updater.check(manual: true) }
+            }.disabled(delegate.updater.checking || delegate.updater.installing)
+            if !delegate.updater.status.isEmpty { Text(delegate.updater.status) }
             Divider()
             Button("Quit Convy") { NSApp.terminate(nil) }.keyboardShortcut("q")
         }
@@ -49,6 +68,7 @@ struct Item: Identifiable {
 
 struct ContentView: View {
     let dragWheel: DragWheelController
+    let updater: Updater
     @State private var quickDrag = true
     @State private var items: [Item] = []
     @State private var format = ImageFormat.png
@@ -133,6 +153,8 @@ struct ContentView: View {
             }
         }.padding(24).frame(minWidth: 700, minHeight: 580)
         .preferredColorScheme(theme == "Sistem" ? nil : theme == "Gelap" ? .dark : .light)
+        .disabled(updater.installing)
+        .onChange(of: items.count, initial: true) { _, count in updater.queuedFiles = count }
     }
 
     private func add(_ urls: [URL]) {
@@ -161,6 +183,7 @@ struct ContentView: View {
     private func run() {
         guard let folder, !busy else { return }
         busy = true
+        updater.windowBusy = true
         let selectedFormat = format, selectedQuality = quality
         Task {
             var completed = 0
@@ -179,6 +202,7 @@ struct ContentView: View {
             }
             message = "Selesai: \(completed) berhasil, \(items.count - completed) gagal."
             busy = false
+            updater.windowBusy = false
         }
     }
 }
