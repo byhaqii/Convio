@@ -136,7 +136,7 @@ enum WheelGeometry {
             panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
             panel.hidesOnDeactivate = false
             panel.isReleasedWhenClosed = false
-            panel.title = "Convy Quick Convert"
+            panel.title = "Convio Quick Convert"
             panel.onCancel = { [weak self] in
                 guard let self, !processing else { return }
                 manualUntil = nil; dismissed = true; hide()

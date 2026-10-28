@@ -3,8 +3,8 @@ import Foundation
 @main struct UpdateTests {
     static func main() throws {
         func metadata(_ version: String = "0.4.10", digest: String? = "sha256:" + String(repeating: "a", count: 64), url: String? = nil, prerelease: Bool = false) throws -> Data {
-            var asset: [String: Any] = ["name": "Convy-\(version)-arm64.zip",
-                "browser_download_url": url ?? "https://github.com/byhaqii/Convy/releases/download/v\(version)/Convy-\(version)-arm64.zip"]
+            var asset: [String: Any] = ["name": "Convio-\(version)-arm64.zip",
+                "browser_download_url": url ?? "https://github.com/byhaqii/Convio/releases/download/v\(version)/Convio-\(version)-arm64.zip"]
             asset["digest"] = digest
             return try JSONSerialization.data(withJSONObject: ["tag_name": "v" + version,
                 "draft": false, "prerelease": prerelease, "assets": [asset]])

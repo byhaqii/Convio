@@ -23,7 +23,7 @@ import Darwin
         precondition(blocked == 73, "A second process acquired the wheel owner's lock")
         owner = nil
         let released = try probe()
-        precondition(released == 0, "Exiting Convy left a stale lock")
+        precondition(released == 0, "Exiting Convio left a stale lock")
         print("PASS: second process blocked; lock released when owner exits")
     }
 }

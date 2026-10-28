@@ -23,12 +23,12 @@ enum UpdateValidation {
 
     static func verifyBundle(_ url: URL, version: String) throws {
         guard try url.resourceValues(forKeys: [.isSymbolicLinkKey]).isSymbolicLink == false,
-              let bundle = Bundle(url: url), bundle.bundleIdentifier == "com.shustle.convy",
+              let bundle = Bundle(url: url), bundle.bundleIdentifier == "com.shustle.convio",
               bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String == version,
               let minimum = bundle.object(forInfoDictionaryKey: "LSMinimumSystemVersion") as? String,
-              let executable = bundle.executableURL, executable.lastPathComponent == "Convy",
+              let executable = bundle.executableURL, executable.lastPathComponent == "Convio",
               FileManager.default.fileExists(atPath: executable.path) else {
-            throw UpdateError("The downloaded app is not the expected Convy version.")
+            throw UpdateError("The downloaded app is not the expected Convio version.")
         }
         let os = ProcessInfo.processInfo.operatingSystemVersion
         let currentOS = "\(os.majorVersion).\(os.minorVersion).\(os.patchVersion)"

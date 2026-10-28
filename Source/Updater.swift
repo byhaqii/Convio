@@ -18,21 +18,21 @@ import Observation
         checking = true
         defer { checking = false }
         do {
-            var request = URLRequest(url: URL(string: "https://api.github.com/repos/byhaqii/Convy/releases/latest")!,
+            var request = URLRequest(url: URL(string: "https://api.github.com/repos/byhaqii/Convio/releases/latest")!,
                                      cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 30)
             request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
-            request.setValue("Convy", forHTTPHeaderField: "User-Agent")
+            request.setValue("Convio", forHTTPHeaderField: "User-Agent")
             let (data, response) = try await URLSession.shared.data(for: request)
             guard !installing else { return }
             guard (response as? HTTPURLResponse)?.statusCode == 200 else {
                 throw UpdateError("GitHub could not check for updates. Try again later.")
             }
             guard let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String else {
-                throw UpdateError("Convy's installed version could not be read.")
+                throw UpdateError("Convio's installed version could not be read.")
             }
             available = try UpdateRelease.parse(data, currentVersion: version)
-            status = available.map { "Convy \($0.version) is available" } ?? "Convy is up to date"
-            if manual { showMessage("Convy Updates", status) }
+            status = available.map { "Convio \($0.version) is available" } ?? "Convio is up to date"
+            if manual { showMessage("Convio Updates", status) }
         } catch {
             if manual { showMessage("Could not check for updates", error.localizedDescription) }
         }
@@ -52,8 +52,8 @@ import Observation
         do {
             try UpdateSafety.requireIdle(windowBusy: windowBusy, wheelBusy: dragWheel.isProcessing)
             let alert = NSAlert()
-            alert.messageText = "Update to Convy \(release.version)?"
-            alert.informativeText = "Convy will download the update and restart. Your original files and conversion results stay unchanged."
+            alert.messageText = "Update to Convio \(release.version)?"
+            alert.informativeText = "Convio will download the update and restart. Your original files and conversion results stay unchanged."
                 + (queuedFiles > 0 ? " The current list of \(queuedFiles) files will be cleared." : "")
             alert.addButton(withTitle: "Update & Restart")
             alert.addButton(withTitle: "Later")
@@ -64,8 +64,8 @@ import Observation
             dragWheel.updating = true
             status = "Downloading update…"
             let destination = Bundle.main.bundleURL.resolvingSymlinksInPath()
-            guard destination.pathExtension == "app" else { throw UpdateError("Run Convy from an installed app bundle to update.") }
-            let directory = destination.deletingLastPathComponent().appendingPathComponent(".Convy-update-" + UUID().uuidString)
+            guard destination.pathExtension == "app" else { throw UpdateError("Run Convio from an installed app bundle to update.") }
+            let directory = destination.deletingLastPathComponent().appendingPathComponent(".Convio-update-" + UUID().uuidString)
             try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: false,
                                                  attributes: [.posixPermissions: 0o700])
             work = directory
@@ -75,11 +75,11 @@ import Observation
             guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw UpdateError("The update could not be downloaded.") }
             try UpdateValidation.verifyArchive(download, sha256: release.sha256)
             try UpdateValidation.run("/usr/bin/ditto", ["-x", "-k", download.path, directory.path])
-            let staged = directory.appendingPathComponent("Convy.app")
+            let staged = directory.appendingPathComponent("Convio.app")
             try UpdateValidation.verifyBundle(staged, version: release.version)
             try UpdateSafety.requireIdle(windowBusy: windowBusy, wheelBusy: dragWheel.isProcessing)
             guard let resource = Bundle.main.url(forResource: "update-app", withExtension: "sh") else {
-                throw UpdateError("The update helper is missing. Reinstall Convy using Terminal.")
+                throw UpdateError("The update helper is missing. Reinstall Convio using Terminal.")
             }
             let helper = directory.appendingPathComponent("update-app.sh")
             try FileManager.default.copyItem(at: resource, to: helper)
@@ -99,7 +99,7 @@ import Observation
             NSApp.terminate(nil)
         } catch {
             status = "Update failed"
-            showMessage("Convy was not updated", error.localizedDescription)
+            showMessage("Convio was not updated", error.localizedDescription)
         }
     }
 

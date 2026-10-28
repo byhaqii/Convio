@@ -34,14 +34,14 @@ struct UpdateRelease: Sendable {
         }
         let release = try JSONDecoder().decode(Release.self, from: data)
         guard !release.draft, !release.prerelease, release.tag_name.hasPrefix("v") else {
-            throw UpdateError("The release is not a stable Convy version.")
+            throw UpdateError("The release is not a stable Convio version.")
         }
         let version = String(release.tag_name.dropFirst())
         let numbers = try versionNumbers(version)
         let current = try versionNumbers(currentVersion)
         guard current.lexicographicallyPrecedes(numbers) else { return nil }
-        let name = "Convy-\(version)-arm64.zip"
-        let expected = "https://github.com/byhaqii/Convy/releases/download/v\(version)/\(name)"
+        let name = "Convio-\(version)-arm64.zip"
+        let expected = "https://github.com/byhaqii/Convio/releases/download/v\(version)/\(name)"
         guard let asset = release.assets.first(where: { $0.name == name }),
               asset.browser_download_url == expected, let url = URL(string: expected),
               let digest = asset.digest, digest.hasPrefix("sha256:") else {

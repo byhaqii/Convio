@@ -1,10 +1,12 @@
-# Convy
+# Convio
 
-![Convy — convert images and PDFs on your Mac](output/posters/convy-poster.png)
+![Convio — convert images and PDFs on your Mac](output/posters/convio-poster.png)
 
 A local image and PDF converter for Apple Silicon Macs running macOS 14 or later.
 
-Version 0.4.6 updates the app icon with larger, edge-to-edge artwork. The raster master and macOS icon are in `Source/Assets/`; the build script installs the icon automatically.
+Convio is the new product name. Users of the previous app identity must quit the old app and install Convio manually once; future Convio updates use the menu bar updater.
+
+Version 0.4.7 introduces the Convio name across the app, installer, and banners. The raster master and macOS icon are in `Source/Assets/`; the build script installs the icon automatically.
 
 ## Use
 
@@ -13,24 +15,24 @@ Version 0.4.6 updates the app icon with larger, edge-to-edge artwork. The raster
 On an Apple Silicon Mac running macOS 14 or later, paste:
 
 ```sh
-curl -fsSL https://github.com/byhaqii/Convy/releases/latest/download/install.sh | /bin/bash
+curl -fsSL https://github.com/byhaqii/Convio/releases/latest/download/install.sh | /bin/bash
 ```
 
-This downloads the compiled app, checks its SHA-256 and signature, and installs it in `~/Applications`. No Xcode or sudo is needed. Open Convy from that folder. To upgrade an older installation, quit Convy first and run the same command; the previous app is backed up before replacement.
+This downloads the compiled app, checks its SHA-256 and signature, and installs it in `~/Applications`. No Xcode or sudo is needed. Open Convio from that folder. To upgrade an older installation, quit Convio first and run the same command; the previous app is backed up before replacement.
 
 The app is ad-hoc signed and not notarized. If macOS blocks it, approve it in **System Settings → Privacy & Security → Open Anyway**.
 
 ### Updates
 
-Convy checks GitHub Releases at launch and every 24 hours while running. Open the menu bar icon for **Check for Updates…** or **Update & Restart** when a newer release is available. Installation requires confirmation and waits until no conversion is running. Restarting clears the window's file list; original files and conversion results are preserved.
+Convio checks GitHub Releases at launch and every 24 hours while running. Open the menu bar icon for **Check for Updates…** or **Update & Restart** when a newer release is available. Installation requires confirmation and waits until no conversion is running. Restarting clears the window's file list; original files and conversion results are preserved.
 
 Version 0.4.2 and earlier require the Terminal command above once to gain in-app updating. The app must be installed in a writable folder; updating an administrator-owned installation may require moving it to `~/Applications` first.
 
-Updates validate the GitHub asset checksum, bundle identity/version, macOS compatibility, architecture, and code signature before replacement. Downloads trust HTTPS and the `byhaqii/Convy` repository; ad-hoc signing does not verify publisher identity. No Gatekeeper protections are bypassed. The previous app and `update.log` remain in a hidden `.Convy-update-*` folder beside the installed app for recovery. A replacement or launch-command failure restores the previous app; a later app crash is not automatically detected.
+Updates validate the GitHub asset checksum, bundle identity/version, macOS compatibility, architecture, and code signature before replacement. Downloads trust HTTPS and the `byhaqii/Convio` repository; ad-hoc signing does not verify publisher identity. No Gatekeeper protections are bypassed. The previous app and `update.log` remain in a hidden `.Convio-update-*` folder beside the installed app for recovery. A replacement or launch-command failure restores the previous app; a later app crash is not automatically detected.
 
-Open **Convy.app**. Convy runs in the background with a circular-arrows icon in the macOS menu bar and no Dock icon. Click the icon for **Open Convy**, **Open Wheel**, or **Quit Convy**. Closing the converter window keeps Convy running; opening it again preserves the current file list. Convy does not automatically start at login.
+Open **Convio.app**. Convio runs in the background with a circular-arrows icon in the macOS menu bar and no Dock icon. Click the icon for **Open Convio**, **Open Wheel**, or **Quit Convio**. Closing the converter window keeps Convio running; opening it again preserves the current file list. Convio does not automatically start at login.
 
-Launching another copy activates the existing Convy instead of starting another drag monitor. If older copies are already running from different folders, quit all of them once, then launch only the updated installation in `~/Applications`.
+Launching another copy activates the existing Convio instead of starting another drag monitor. If older copies are already running from different folders, quit all of them once, then launch only the updated installation in `~/Applications`.
 
 Hold **Shift** while dragging a file in Finder, then drop it onto JPG, PNG, HEIC, or PDF. The rounded glass wheel appears near the pointer. Results are saved beside the source with a new name; originals and existing files are never overwritten.
 
@@ -48,7 +50,7 @@ Animated images, locked PDFs, and PDF-to-PDF conversion are rejected. Images/pag
 
 The app is locally ad-hoc signed, not Apple-notarized. Intel Macs and older macOS releases have not been tested.
 
-Quit the old Berkas app before opening Convy so that only one Shift-drag wheel runs.
+Quit the old Berkas app before opening Convio so that only one Shift-drag wheel runs.
 
 ## Build
 
@@ -61,29 +63,29 @@ bash Source/build.sh
 ## Test
 
 ```sh
-swiftc -swift-version 6 -parse-as-library Source/Converter.swift Source/DragWheel.swift Source/Tests.swift -o /tmp/convy-tests
-/tmp/convy-tests
+swiftc -swift-version 6 -parse-as-library Source/Converter.swift Source/DragWheel.swift Source/Tests.swift -o /tmp/convio-tests
+/tmp/convio-tests
 ```
 
 Update checks and isolated replacement tests:
 
 ```sh
-swiftc -module-cache-path /tmp/convy-module-cache -swift-version 6 -parse-as-library Source/UpdateRelease.swift Source/UpdateValidation.swift Source/UpdateTests.swift -o /tmp/convy-update-tests
-/tmp/convy-update-tests
+swiftc -module-cache-path /tmp/convio-module-cache -swift-version 6 -parse-as-library Source/UpdateRelease.swift Source/UpdateValidation.swift Source/UpdateTests.swift -o /tmp/convio-update-tests
+/tmp/convio-update-tests
 python3 Source/test-update.py
-python3 Source/test-install.py /path/to/Convy-0.4.6-arm64.zip
-swiftc -module-cache-path /tmp/convy-module-cache -swift-version 6 -parse-as-library Source/InstanceLock.swift Source/InstanceTests.swift -o /tmp/convy-instance-tests
-/tmp/convy-instance-tests
+python3 Source/test-install.py /path/to/Convio-0.4.7-arm64.zip
+swiftc -module-cache-path /tmp/convio-module-cache -swift-version 6 -parse-as-library Source/InstanceLock.swift Source/InstanceTests.swift -o /tmp/convio-instance-tests
+/tmp/convio-instance-tests
 ```
 
 The helper test replaces fixture directories and mocks the macOS launcher; it does not prove a real app restart. The installer test uses the supplied release archive, an isolated home folder, and mocked download/launch commands.
 
 Use `--skip-heic` when running tests in environments that block the hardware encoder. HEIC was tested through the previous app build on this Mac.
 
-Version 0.4 verification: build and local signature passed; conversion, multi-page PDF, original-file protection, duplicate names, EXIF orientation, invalid input, and rounded-sector hit tests passed. The Convy name, rounded wheel, and Escape dismissal were checked in the running app. Other Macs and frame-by-frame animation timing were not checked.
+Version 0.4 verification: build and local signature passed; conversion, multi-page PDF, original-file protection, duplicate names, EXIF orientation, invalid input, and rounded-sector hit tests passed. The Convio name, rounded wheel, and Escape dismissal were checked in the running app. Other Macs and frame-by-frame animation timing were not checked.
 
 ## GitHub
 
-Source is hosted at [byhaqii/Convy](https://github.com/byhaqii/Convy). Compiled downloads and the installer are available in [Releases](https://github.com/byhaqii/Convy/releases). Build outputs are ignored.
+Source is hosted at [byhaqii/Convio](https://github.com/byhaqii/Convio). Compiled downloads and the installer are available in [Releases](https://github.com/byhaqii/Convio/releases). Build outputs are ignored.
 
-For future updates, use a stable `vMAJOR.MINOR.PATCH` release tag matching `CFBundleShortVersionString`, upload `Convy-MAJOR.MINOR.PATCH-arm64.zip`, and attach the matching `install.sh`. GitHub supplies the asset's SHA-256 digest used by the in-app updater. Update the installer's pinned version/checksum and run the checks above before publishing.
+For future updates, use a stable `vMAJOR.MINOR.PATCH` tag matching `CFBundleShortVersionString`, upload `Convio-MAJOR.MINOR.PATCH-arm64.zip` containing `Convio.app`, and attach the matching `install.sh`. The executable is `Convio` and the bundle ID is `com.shustle.convio`. Set the installer checksum from the newly built archive before publishing. GitHub supplies the asset digest used by the in-app updater.

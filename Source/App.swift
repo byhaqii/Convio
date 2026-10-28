@@ -10,12 +10,12 @@ import UniformTypeIdentifiers
     private var instanceLock: InstanceLock?
 
     func applicationWillFinishLaunching(_ notification: Notification) {
-        let others = NSRunningApplication.runningApplications(withBundleIdentifier: "com.shustle.convy")
+        let others = NSRunningApplication.runningApplications(withBundleIdentifier: "com.shustle.convio")
             .filter { $0.processIdentifier != ProcessInfo.processInfo.processIdentifier }
         do {
             let cache = try FileManager.default.url(for: .cachesDirectory, in: .userDomainMask,
                                                    appropriateFor: nil, create: true)
-                .appendingPathComponent("com.shustle.convy")
+                .appendingPathComponent("com.shustle.convio")
             try FileManager.default.createDirectory(at: cache, withIntermediateDirectories: true,
                                                  attributes: [.posixPermissions: 0o700])
             instanceLock = try InstanceLock(url: cache.appendingPathComponent("instance.lock"))
@@ -27,7 +27,7 @@ import UniformTypeIdentifiers
             }
         } catch {
             let alert = NSAlert()
-            alert.messageText = "Convy could not start"
+            alert.messageText = "Convio could not start"
             alert.informativeText = error.localizedDescription
             alert.runModal()
             NSApp.terminate(nil)
@@ -49,7 +49,7 @@ import UniformTypeIdentifiers
                 contentRect: NSRect(x: 0, y: 0, width: 760, height: 600),
                 styleMask: [.titled, .closable, .miniaturizable, .resizable],
                 backing: .buffered, defer: false)
-            window.title = "Convy"
+            window.title = "Convio"
             window.contentViewController = NSHostingController(rootView: ContentView(dragWheel: dragWheel, updater: updater))
             window.isReleasedWhenClosed = false
             window.center()
@@ -72,11 +72,11 @@ struct Item: Identifiable {
     var outputs: [URL] = []
 }
 
-@main struct ConvyApp: App {
+@main struct ConvioApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
     var body: some Scene {
-        MenuBarExtra("Convy", systemImage: "arrow.triangle.2.circlepath") {
-            Button("Open Convy") { delegate.showConverter() }
+        MenuBarExtra("Convio", systemImage: "arrow.triangle.2.circlepath") {
+            Button("Open Convio") { delegate.showConverter() }
             Button("Open Wheel") { delegate.dragWheel.openWheel() }
                 .disabled(delegate.updater.installing)
             Divider()
@@ -89,7 +89,7 @@ struct Item: Identifiable {
             }.disabled(delegate.updater.checking || delegate.updater.installing)
             if !delegate.updater.status.isEmpty { Text(delegate.updater.status) }
             Divider()
-            Button("Quit Convy") { NSApp.terminate(nil) }.keyboardShortcut("q")
+            Button("Quit Convio") { NSApp.terminate(nil) }.keyboardShortcut("q")
         }
     }
 }
@@ -110,7 +110,7 @@ struct ContentView: View {
         VStack(alignment: .leading, spacing: 18) {
             HStack(alignment: .firstTextBaseline) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Convy").font(.largeTitle.weight(.semibold))
+                    Text("Convio").font(.largeTitle.weight(.semibold))
                     Text("Konversi gambar dan PDF di Mac-mu.").foregroundStyle(.secondary)
                 }
                 Spacer()

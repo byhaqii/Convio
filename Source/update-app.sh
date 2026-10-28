@@ -10,7 +10,7 @@ backup="$work/Previous.app"
 [[ "$pid" =~ ^[0-9]+$ && -d "$destination" && -d "$staged" && ! -e "$backup" ]] || exit 1
 lock="$destination.update-lock"
 if ! mkdir "$lock"; then
-    echo 'Another Convy installation is already in progress.' >&2
+    echo 'Another Convio installation is already in progress.' >&2
     exit 1
 fi
 trap 'rmdir "$lock" 2>/dev/null || true' EXIT
@@ -20,7 +20,7 @@ if (( pid > 1 )); then
         sleep 1
     done
     if kill -0 "$pid" 2>/dev/null; then
-        echo 'Convy did not quit; the existing installation was left untouched.' >&2
+        echo 'Convio did not quit; the existing installation was left untouched.' >&2
         exit 1
     fi
 fi
@@ -38,4 +38,4 @@ if ! open -n "$destination"; then
     echo 'Relaunch failed; restored the previous app.' >&2
     exit 1
 fi
-echo "Updated Convy. Previous app retained at: $backup"
+echo "Updated Convio. Previous app retained at: $backup"

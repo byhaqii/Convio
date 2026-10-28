@@ -17,7 +17,7 @@ struct ConversionError: LocalizedError {
 enum Converter {
     @concurrent static func convert(_ input: URL, to format: ImageFormat, quality: Double, folder: URL) async throws -> [URL] {
         guard input.isFileURL, folder.isFileURL else { throw ConversionError(message: "Pilih file dan folder lokal.") }
-        let temporary = FileManager.default.temporaryDirectory.appendingPathComponent("Convy-" + UUID().uuidString)
+        let temporary = FileManager.default.temporaryDirectory.appendingPathComponent("Convio-" + UUID().uuidString)
         try FileManager.default.createDirectory(at: temporary, withIntermediateDirectories: true)
         var outputs: [URL] = []
         var finished = false

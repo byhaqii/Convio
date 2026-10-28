@@ -1,4 +1,4 @@
-# Convy Auto Update Implementation Plan
+# Convio Auto Update Implementation Plan
 
 > **For agentic workers:** Use executing-plans to implement this plan task-by-task. Execution remains in this session.
 

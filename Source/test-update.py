@@ -18,12 +18,12 @@ with tempfile.TemporaryDirectory() as temporary:
     for scenario in ['success', 'launch-failure', 'move-failure', 'locked']:
         case = root / scenario
         case.mkdir()
-        installed = case / 'Convy.app'
+        installed = case / 'Convio.app'
         installed.mkdir()
         (installed / 'version').write_text('old')
-        work = case / '.Convy-update-test'
+        work = case / '.Convio-update-test'
         work.mkdir()
-        staged = work / 'Convy.app'
+        staged = work / 'Convio.app'
         staged.mkdir()
         (staged / 'version').write_text('new')
         if scenario == 'locked':

@@ -15,7 +15,7 @@ import UniformTypeIdentifiers
         let cornerAngle = CGFloat.pi / 4 + 0.025
         let removedCorner = CGPoint(x: 140 + 131.9 * cos(cornerAngle), y: 140 + 131.9 * sin(cornerAngle))
         precondition(WheelGeometry.sector(at: removedCorner) == nil)
-        let root = FileManager.default.temporaryDirectory.appendingPathComponent("Convy-tests-" + UUID().uuidString)
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("Convio-tests-" + UUID().uuidString)
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: root) }
         let input = root.appendingPathComponent("Original image.png")
