@@ -2,7 +2,7 @@
 
 A local image and PDF converter for Apple Silicon Macs running macOS 14 or later.
 
-Version 0.4.3 adds in-app update checks and Update & Restart. The raster master and macOS icon are in `Source/Assets/`; the build script installs the icon automatically.
+Version 0.4.4 prevents duplicate background wheels by allowing only one Convy instance per user. The raster master and macOS icon are in `Source/Assets/`; the build script installs the icon automatically.
 
 ## Use
 
@@ -27,6 +27,8 @@ Version 0.4.2 and earlier require the Terminal command above once to gain in-app
 Updates validate the GitHub asset checksum, bundle identity/version, macOS compatibility, architecture, and code signature before replacement. Downloads trust HTTPS and the `byhaqii/Convy` repository; ad-hoc signing does not verify publisher identity. No Gatekeeper protections are bypassed. The previous app and `update.log` remain in a hidden `.Convy-update-*` folder beside the installed app for recovery. A replacement or launch-command failure restores the previous app; a later app crash is not automatically detected.
 
 Open **Convy.app**. Convy runs in the background with a circular-arrows icon in the macOS menu bar and no Dock icon. Click the icon for **Open Convy**, **Open Wheel**, or **Quit Convy**. Closing the converter window keeps Convy running; opening it again preserves the current file list. Convy does not automatically start at login.
+
+Launching another copy activates the existing Convy instead of starting another drag monitor. If older copies are already running from different folders, quit all of them once, then launch only the updated installation in `~/Applications`.
 
 Hold **Shift** while dragging a file in Finder, then drop it onto JPG, PNG, HEIC, or PDF. The rounded glass wheel appears near the pointer. Results are saved beside the source with a new name; originals and existing files are never overwritten.
 
@@ -67,7 +69,9 @@ Update checks and isolated replacement tests:
 swiftc -module-cache-path /tmp/convy-module-cache -swift-version 6 -parse-as-library Source/UpdateRelease.swift Source/UpdateValidation.swift Source/UpdateTests.swift -o /tmp/convy-update-tests
 /tmp/convy-update-tests
 python3 Source/test-update.py
-python3 Source/test-install.py /path/to/Convy-0.4.3-arm64.zip
+python3 Source/test-install.py /path/to/Convy-0.4.4-arm64.zip
+swiftc -module-cache-path /tmp/convy-module-cache -swift-version 6 -parse-as-library Source/InstanceLock.swift Source/InstanceTests.swift -o /tmp/convy-instance-tests
+/tmp/convy-instance-tests
 ```
 
 The helper test replaces fixture directories and mocks the macOS launcher; it does not prove a real app restart. The installer test uses the supplied release archive, an isolated home folder, and mocked download/launch commands.

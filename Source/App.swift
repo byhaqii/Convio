@@ -7,8 +7,36 @@ import UniformTypeIdentifiers
     lazy var updater = Updater(dragWheel: dragWheel)
     private var converterWindow: NSWindow?
     private var updateTimer: Timer?
+    private var instanceLock: InstanceLock?
+
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        let others = NSRunningApplication.runningApplications(withBundleIdentifier: "com.shustle.convy")
+            .filter { $0.processIdentifier != ProcessInfo.processInfo.processIdentifier }
+        do {
+            let cache = try FileManager.default.url(for: .cachesDirectory, in: .userDomainMask,
+                                                   appropriateFor: nil, create: true)
+                .appendingPathComponent("com.shustle.convy")
+            try FileManager.default.createDirectory(at: cache, withIntermediateDirectories: true,
+                                                 attributes: [.posixPermissions: 0o700])
+            instanceLock = try InstanceLock(url: cache.appendingPathComponent("instance.lock"))
+            // Older copies do not hold the lock, so also check Launch Services.
+            if instanceLock == nil || others.contains(where: { $0.isFinishedLaunching }) {
+                others.first?.activate()
+                instanceLock = nil
+                NSApp.terminate(nil)
+            }
+        } catch {
+            let alert = NSAlert()
+            alert.messageText = "Convy could not start"
+            alert.informativeText = error.localizedDescription
+            alert.runModal()
+            NSApp.terminate(nil)
+        }
+    }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        guard instanceLock != nil else { return }
+        dragWheel.start()
         Task { await updater.check(manual: false) }
         updateTimer = Timer.scheduledTimer(withTimeInterval: 86_400, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in await self?.updater.check(manual: false) }

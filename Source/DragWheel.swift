@@ -70,7 +70,8 @@ enum WheelGeometry {
         didSet { if !enabled && !processing { hide() } }
     }
 
-    init() {
+    func start() {
+        guard timer == nil else { return }
         let timer = Timer(timeInterval: 0.05, repeats: true) { [weak self] _ in
             MainActor.assumeIsolated { self?.poll() }
         }
