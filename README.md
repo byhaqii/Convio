@@ -1,8 +1,10 @@
 # Convy
 
+![Convy — convert images and PDFs on your Mac](output/posters/convy-poster.png)
+
 A local image and PDF converter for Apple Silicon Macs running macOS 14 or later.
 
-Version 0.4.5 fixes PDF-to-image scaling so page content fills the output at 144 DPI. The raster master and macOS icon are in `Source/Assets/`; the build script installs the icon automatically.
+Version 0.4.6 updates the app icon with larger, edge-to-edge artwork. The raster master and macOS icon are in `Source/Assets/`; the build script installs the icon automatically.
 
 ## Use
 
@@ -69,7 +71,7 @@ Update checks and isolated replacement tests:
 swiftc -module-cache-path /tmp/convy-module-cache -swift-version 6 -parse-as-library Source/UpdateRelease.swift Source/UpdateValidation.swift Source/UpdateTests.swift -o /tmp/convy-update-tests
 /tmp/convy-update-tests
 python3 Source/test-update.py
-python3 Source/test-install.py /path/to/Convy-0.4.5-arm64.zip
+python3 Source/test-install.py /path/to/Convy-0.4.6-arm64.zip
 swiftc -module-cache-path /tmp/convy-module-cache -swift-version 6 -parse-as-library Source/InstanceLock.swift Source/InstanceTests.swift -o /tmp/convy-instance-tests
 /tmp/convy-instance-tests
 ```

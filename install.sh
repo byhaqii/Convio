@@ -25,13 +25,13 @@ work=$(mktemp -d "$HOME/Applications/.Convy-update.XXXXXX")
 lock=''
 trap 'if [[ -n "$lock" ]]; then rmdir "$lock" 2>/dev/null || true; fi; if [[ ! -e "$work/Previous.app" ]]; then rm -rf "$work"; fi' EXIT
 curl --fail --location --show-error --silent \
-    https://github.com/byhaqii/Convy/releases/download/v0.4.5/Convy-0.4.5-arm64.zip \
+    https://github.com/byhaqii/Convy/releases/download/v0.4.6/Convy-0.4.6-arm64.zip \
     -o "$work/Convy.zip"
-echo "7c10723783219de0ae2f50e2a8ca43deca71e5651dbe1b9b860fbc377a099056  $work/Convy.zip" | shasum -a 256 -c -
+echo "1b356249d2cb6ec3efc6a150311366abd4dc7ad0d2a50490c664494123682e6c  $work/Convy.zip" | shasum -a 256 -c -
 ditto -x -k "$work/Convy.zip" "$work"
 codesign --verify --deep --strict "$work/Convy.app"
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$work/Convy.app/Contents/Info.plist")" == com.shustle.convy ]]
-[[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$work/Convy.app/Contents/Info.plist")" == 0.4.5 ]]
+[[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$work/Convy.app/Contents/Info.plist")" == 0.4.6 ]]
 lipo "$work/Convy.app/Contents/MacOS/Convy" -verify_arch arm64
 if [[ -d "$destination" ]]; then
     if pgrep -x Convy >/dev/null; then
