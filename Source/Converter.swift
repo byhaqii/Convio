@@ -47,7 +47,9 @@ enum Converter {
                     }
                     let rect = CGRect(x: 0, y: 0, width: width, height: height)
                     context.setFillColor(CGColor(gray: 1, alpha: 1)); context.fill(rect)
-                    context.concatenate(page.getDrawingTransform(.cropBox, rect: rect, rotate: 0, preserveAspectRatio: true))
+                    context.scaleBy(x: 2, y: 2)
+                    let pageRect = CGRect(x: 0, y: 0, width: width / 2, height: height / 2)
+                    context.concatenate(page.getDrawingTransform(.cropBox, rect: pageRect, rotate: 0, preserveAspectRatio: true))
                     context.drawPDFPage(page)
                     guard let image = context.makeImage() else { throw ConversionError(message: "Gagal merender halaman PDF.") }
                     return try save(image, format: format, quality: quality, folder: folder, temporary: temporary,

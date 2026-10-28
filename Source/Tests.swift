@@ -98,6 +98,15 @@ import UniformTypeIdentifiers
             let source = CGImageSourceCreateWithURL(output as CFURL, nil)!
             let image = CGImageSourceCreateImageAtIndex(source, 0, nil)!
             precondition(image.width == (index == 0 ? 64 : 40) && image.height == (index == 0 ? 48 : 80))
+            var pixel = [UInt8](repeating: 0, count: 4)
+            pixel.withUnsafeMutableBytes { bytes in
+                let sample = CGContext(data: bytes.baseAddress, width: 1, height: 1, bitsPerComponent: 8,
+                    bytesPerRow: 4, space: CGColorSpaceCreateDeviceRGB(),
+                    bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue)!
+                sample.draw(image, in: CGRect(x: -2, y: -2, width: image.width, height: image.height))
+            }
+            precondition(pixel[1] < 128 && pixel[index == 0 ? 0 : 2] > 180,
+                "PDF content must fill the image, including near its edge")
         }
         let secondPages = try await Converter.convert(document, to: .jpg, quality: 0.9, folder: root)
         precondition(Set(pages).isDisjoint(with: Set(secondPages)))
